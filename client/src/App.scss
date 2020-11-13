@@ -1,0 +1,24 @@
+$drawer-width: 240px;
+
+.app-wrapper {
+  display: 'flex';
+}
+
+.app-bar {
+  z-index: 99999 !important;
+}
+
+.drawer {
+  width: $drawer-width;
+  flex-shrink: 0;
+}
+
+.drawer-paper {
+  width: $drawer-width;
+}
+
+.content {
+  margin-left: $drawer-width;
+  margin-top: 64px;
+  padding: 40px 20px;
+}

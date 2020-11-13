@@ -1,0 +1,21 @@
+{
+  "name": "database-final-project",
+  "version": "1.0.0",
+  "author": {
+    "name": "David Bradshaw",
+    "url": "https://davidbradshaw.us"
+  },
+  "scripts": {
+    "client": "cd client && npm run start",
+    "server": "nodemon server/main.js",
+    "install:client": "cd client && npm install && cd ..",
+    "start": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\""
+  },
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "concurrently": "^4.0.1",
+    "express": "^4.16.4",
+    "mysql": "^2.18.1",
+    "nodemon": "^2.0.6"
+  }
+}
