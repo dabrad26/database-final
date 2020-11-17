@@ -181,7 +181,7 @@ CREATE VIEW membership_list AS
 
 -- END CREATE TABLE
 
--- Create Current Static Entries (Movies, Benefits, Membership Types; these are admin events that change rarely)
+-- Create Current Static Entries (these are admin tasks that change rarely)
 -- Create Movies (Only 3-5 are ever available at one time)
 INSERT INTO movie (`name`, `duration`, `start_date`, `type`, `adult_price`, `child_price`) VALUES ("Grand Canyon Adventure", 72, "2020-07-21", "3D IMAX", 6.50, 4.00);
 INSERT INTO movie (`name`, `duration`, `start_date`, `end_date`, `type`, `adult_price`, `child_price`) VALUES ("Nemo's Sea Journey", 46, "2019-01-19", "2020-02-01", "IMAX", 5.50, 3.00);
@@ -200,9 +200,62 @@ INSERT INTO benefit (`name`, `discount`) VALUES ("Canoe The Flint Discount", 25.
 INSERT INTO benefit (`name`, `discount`) VALUES ("Summer Camp Discount", 10.00);
 INSERT INTO benefit (`name`, `discount`) VALUES ("Holiday Camp Discount", 15.00);
 
+-- Create Special Events (these are usually added about 2 months prior to actual event. Most members invited. But any who show up are allowed entry)
+INSERT INTO special_event (`name`, `date_time`, `location`, `url`) VALUES ("Tadpole Time: Fireflies", "2020-08-05 09:30:00", "Education Room", "http://flintriverquarium.com/participate/tadpole-time");
+INSERT INTO special_event (`name`, `date_time`, `location`) VALUES ("Return to School Bash", "2020-08-20 20:00:00", "Grand Hall");
+INSERT INTO special_event (`name`, `date_time`, `location`, `url`) VALUES ("Tadpole Time: Snakes", "2020-09-02 09:30:00", "Education Room", "http://flintriverquarium.com/participate/tadpole-time");
+INSERT INTO special_event (`name`, `date_time`, `location`) VALUES ("Halloween Movie Night", "2020-10-31 18:00:00", "Theater");
+INSERT INTO special_event (`name`, `date_time`, `location`, `url`) VALUES ("Tadpole Time: Nocturnal Animals", "2020-10-07 09:30:00", "Education Room", "http://flintriverquarium.com/participate/tadpole-time");
+INSERT INTO special_event (`name`, `date_time`, `location`) VALUES ("A Turtle Thanksgiving Party", "2020-11-26 13:30:00", "Lobby");
+INSERT INTO special_event (`name`, `date_time`, `location`, `url`) VALUES ("Tadpole Time: Trees", "2020-11-13 09:30:00", "Education Room", "http://flintriverquarium.com/participate/tadpole-time");
+INSERT INTO special_event (`name`, `date_time`, `location`) VALUES ("Local Merchant Expo", "2020-12-01 11:30:00", "Courtyard");
+INSERT INTO special_event (`name`, `date_time`, `location`, `url`) VALUES ("Tadpole Time: The Beach", "2020-12-11 09:30:00", "Education Room", "http://flintriverquarium.com/participate/tadpole-time");
+INSERT INTO special_event (`name`, `date_time`, `location`) VALUES ("Christmas Tree Lighting", "2020-12-05 17:00:00", "Lobby");
+INSERT INTO special_event (`name`, `date_time`, `location`) VALUES ("Dinner with Santa", "2020-12-15 18:30:00", "Grand Hall");
+INSERT INTO special_event (`name`, `date_time`, `location`) VALUES ("Santa Dive Show", "2020-12-18 11:45:00", "Blue Hole");
+INSERT INTO special_event (`name`, `date_time`, `location`) VALUES ("Santa Dive Show", "2020-12-19 14:30:00", "Blue Hole");
+INSERT INTO special_event (`name`, `date_time`, `location`) VALUES ("Christmas Gala", "2020-12-21 18:30:00", "Grand Hall");
+INSERT INTO special_event (`name`, `date_time`, `location`) VALUES ("New Year Ball Drop Watching Party", "2020-12-31 21:30:00", "Grand Hall");
+
 -- Create Membership Types (based on older setup prior to change at company)
 INSERT INTO membership_type VALUES (1, "Individual", 49.00, 0, 1, TRUE, 2.00);
 INSERT INTO membership_type VALUES (2, "Family", 89.00, 4, 6, TRUE, 3.00);
 INSERT INTO membership_type VALUES (5, "Friend", 199.00, 6, 6, TRUE, 5.00);
 INSERT INTO membership_type VALUES (6, "Contributor", 349.00, 10, 8, TRUE, 7.00);
 INSERT INTO membership_type VALUES (7, "Blue Hole Society", 1000.00, 10, 8, TRUE, 10.00);
+
+-- Create Promotions
+INSERT INTO promotion (`name`, `promotion_term`, `start_date`, `new_customers_only`) VALUES ("Early Renewal", "Extra 31 days", "2018-01-01", FALSE);
+INSERT INTO promotion (`name`, `promotion_term`, `start_date`, `end_date`, `new_customers_only`) VALUES ("Christmas Membership Drive", "30% Off New Memberships", "2020-11-26", "2021-01-01", TRUE);
+INSERT INTO promotion (`name`, `promotion_term`, `start_date`, `new_customers_only`) VALUES ("ASU Referral", "10% Off When Mentioning Golden Rams", "2017-10-01", FALSE);
+INSERT INTO promotion (`name`, `promotion_term`, `start_date`, `new_customers_only`) VALUES ("Refer a Friend", "10% Off When Referred by a friend", "2015-01-01", TRUE);
+
+-- Create Corporate Sponsors (Organizations)
+INSERT INTO organization (`name`, `discount_percent`, `contact_name`, `address`, `city`, `state`, `zip`, `email`, `phone`) VALUES ("Sumter Regional", 25.00, "John Smith", "510 Main Street", "Albany", "GA", "31701", "john@email.com", "212-555-1010");
+INSERT INTO organization (`name`, `discount_percent`, `contact_name`, `address`, `city`, `state`, `zip`, `email`, `phone`) VALUES ("Phoebe Hospital", 18.00, "Jane Doe", "314 Armena Road", "Worth", "GA", "31708", "john@email.com", "212-555-1010");
+INSERT INTO organization (`name`, `discount_percent`, `contact_name`, `address`, `city`, `state`, `zip`, `email`, `phone`) VALUES ("Albany State", 35.00, "Clancy Camp", "659 Old Highway Road", "Leesburg", "GA", "31705-9526", "john@email.com", "212-555-1010");
+INSERT INTO organization (`name`, `discount_percent`, `contact_name`, `address`, `address_2`, `city`, `state`, `zip`, `email`, `phone`) VALUES ("New Haven Animal Shelter", 10.00, "Rex Charles", "10 Broadway Ave", "Suite 4A", "Albany", "GA", "31709", "john@email.com", "212-555-1010");
+INSERT INTO organization (`name`, `discount_percent`, `contact_name`, `address`, `city`, `state`, `zip`, `email`, `phone`) VALUES ("Avalon Access", 12.00, "Sheila Cartman", "456 Avenue of the Americas", "Atlanta", "GA", "31685", "john@email.com", "212-555-1010");
+INSERT INTO organization (`name`, `discount_percent`, `contact_name`, `address`, `city`, `state`, `zip`, `email`, `phone`) VALUES ("Darton College", 18.00, "Elaine Cramer", "6852 Main Street", "Albany", "GA", "31701", "john@email.com", "212-555-1010");
+INSERT INTO organization (`name`, `discount_percent`, `contact_name`, `address`, `city`, `state`, `zip`, `email`, `phone`) VALUES ("Sumter Dental Association", 26.00, "Gerald Lovejoy", "800 Sumter Ave", "Americus", "GA", "31852", "john@email.com", "212-555-1010");
+INSERT INTO organization (`name`, `discount_percent`, `contact_name`, `address`, `city`, `state`, `zip`, `email`, `phone`) VALUES ("Gamestop", 52.00, "Kratos Sim", "12 43rd Street", "Atlanta", "GA", "35262", "john@email.com", "212-555-1010");
+INSERT INTO organization (`name`, `discount_percent`, `contact_name`, `address`, `city`, `state`, `zip`, `email`, `phone`) VALUES ("Public Grocery", 12.00, "Kyle Marsh", "2365 MLK Ave", "Albany", "GA", "31403", "john@email.com", "212-555-1010");
+INSERT INTO organization (`name`, `discount_percent`, `contact_name`, `address`, `city`, `state`, `zip`, `email`, `phone`) VALUES ("Cheehaw Park", 20.00, "Charles Garrison", "12 Block Ave", "Leesburg", "GA", "31763", "john@email.com", "212-555-1010");
+INSERT INTO organization (`name`, `discount_percent`, `contact_name`, `address`, `city`, `state`, `zip`, `email`, `phone`) VALUES ("Soft Chews Group", 18.00, "Xu Ping", "5856 Murphy Road", "Dawson", "GA", "31625", "john@email.com", "212-555-1010");
+INSERT INTO organization (`name`, `discount_percent`, `contact_name`, `address`, `city`, `state`, `zip`, `email`, `phone`) VALUES ("Viewport Isles", 12.00, "Jeff Yu", "5627 Rural Route 85", "Pensacola", "FL", "62523", "john@email.com", "212-555-1010");
+INSERT INTO organization (`name`, `discount_percent`, `contact_name`, `address`, `city`, `state`, `zip`, `email`, `phone`) VALUES ("Target of the Southeast", 26.00, "Janis White", "985 W 34th Street", "Atlanta", "GA", "36526", "john@email.com", "212-555-1010");
+INSERT INTO organization (`name`, `discount_percent`, `contact_name`, `address`, `city`, `state`, `zip`, `email`, `phone`) VALUES ("Joan Good Store", 5.50, "Joan Winters", "253 Worth Street", "Americus", "GA", "31709", "john@email.com", "212-555-1010");
+INSERT INTO organization (`name`, `discount_percent`, `contact_name`, `address`, `city`, `state`, `zip`, `email`, `phone`) VALUES ("Home Goods Bath House", 7.00, "Charles Hine", "652 Jack Street", "Atlanta", "GA", "36856", "john@email.com", "212-555-1010");
+
+-- Create Employees (about 10 employees were ever in sales)
+INSERT INTO employee VALUES (65, "Ticket Office Sales Associate", "John", "Snow", "652 Jack Street", NULL, "Atlanta", "GA", "36856", "john@email.com", "212-555-1010");
+INSERT INTO employee VALUES (78, "Ticket Office Supervisor", "Meredyth", "Kreeger", "510 Main Street", NULL, "Albany", "GA", "31701", "john@email.com", "212-555-1010");
+INSERT INTO employee VALUES (512, "Ticket Office Sales Associate", "Keesha", "Jackson", "314 Armena Road", NULL, "Worth", "GA", "31708", "john@email.com", "212-555-1010");
+INSERT INTO employee VALUES (211, "Ticket Office Sales Associate", "Gerard", "Pinto", "659 Old Highway Road", NULL, "Leesburg", "GA", "31705-9526", "john@email.com", "212-555-1010");
+INSERT INTO employee VALUES (420, "Gift Shop Manager", "Steve", "Briskal", "10 Broadway Ave", "Suite 4A", "Albany", "GA", "31709", "john@email.com", "212-555-1010");
+INSERT INTO employee VALUES (622, "Concessions Supervisor", "Huck", "Brisk", "456 Avenue of the Americas", NULL, "Atlanta", "GA", "31685", "john@email.com", "212-555-1010");
+INSERT INTO employee VALUES (952, "Rotating Sales Associate", "Cynthia", "Kim", "6852 Main Street", NULL, "Albany", "GA", "31701", "john@email.com", "212-555-1010");
+INSERT INTO employee VALUES (1520, "IMAX Sales Associate/Projectionist", "Howard", "Yu", "800 Sumter Ave", NULL, "Americus", "GA", "31852", "john@email.com", "212-555-1010");
+INSERT INTO employee VALUES (250, "Ticket Office Sales Associate", "Kim", "Roberts", "12 43rd Street", NULL, "Atlanta", "GA", "35262", "john@email.com", "212-555-1010");
+INSERT INTO employee VALUES (625, "Telephone Sales Associate", "Lucia", "Jackson", "2365 MLK Ave", NULL, "Albany", "GA", "31403", "john@email.com", "212-555-1010");
+INSERT INTO employee VALUES (985, "Weekend Box Office Manager", "karen", "LeBlowski", "12 Block Ave", NULL, "Leesburg", "GA", "31763", "john@email.com", "212-555-1010");
