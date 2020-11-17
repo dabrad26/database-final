@@ -8,7 +8,8 @@
 CREATE DATABASE db_final;
 use db_final;
 
--- Create Tables
+-- BEGIN: Create Tables
+
 -- Create Organization Table
 CREATE TABLE organization (
 	organization_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -179,7 +180,9 @@ CREATE VIEW membership_list AS
   INNER JOIN movie_ticket_purchase ON movie_ticket_purchase.membership_id = membership.membership_id
   INNER JOIN membership_type ON membership_type.membership_type_id = membership.membership_type_id;
 
--- END CREATE TABLE
+-- END: Create Tables
+
+-- BEGIN: Create Static (ADMIN) Rows
 
 -- Create Current Static Entries (these are admin tasks that change rarely)
 -- Create Movies (Only 3-5 are ever available at one time)
@@ -259,3 +262,5 @@ INSERT INTO employee VALUES (1520, "IMAX Sales Associate/Projectionist", "Howard
 INSERT INTO employee VALUES (250, "Ticket Office Sales Associate", "Kim", "Roberts", "12 43rd Street", NULL, "Atlanta", "GA", "35262", "john@email.com", "212-555-1010");
 INSERT INTO employee VALUES (625, "Telephone Sales Associate", "Lucia", "Jackson", "2365 MLK Ave", NULL, "Albany", "GA", "31403", "john@email.com", "212-555-1010");
 INSERT INTO employee VALUES (985, "Weekend Box Office Manager", "karen", "LeBlowski", "12 Block Ave", NULL, "Leesburg", "GA", "31763", "john@email.com", "212-555-1010");
+
+-- END: Create Static (ADMIN) Rows
