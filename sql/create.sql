@@ -168,3 +168,15 @@ CREATE TABLE membership_purchase (
   FOREIGN KEY (membership_type_id) REFERENCES membership_type (membership_type_id) ON UPDATE CASCADE,
   FOREIGN KEY (promotion_id) REFERENCES promotion (promotion_id) ON UPDATE CASCADE
 );
+
+-- Create View for membership list with calculatd fields
+CREATE VIEW membership_list AS
+  SELECT membership.*,
+    (membership_type.number_movie_tickets - (SELECT COUNT(*) from movie_ticket_purchase
+      INNER JOIN membership ON movie_ticket_purchase.membership_id = membership.membership_id
+      WHERE movie_ticket_purchase.pass_used = TRUE AND (movie_ticket_purchase.date_time BETWEEN membership.start_date AND membership.end_date)
+    )) AS movie_tickets_left,
+    (DATEDIFF(membership.end_date, CURDATE()) > 0) AS is_expired
+  FROM membership
+  INNER JOIN movie_ticket_purchase ON movie_ticket_purchase.membership_id = membership.membership_id
+  INNER JOIN membership_type ON membership_type.membership_type_id = membership.membership_type_id;
