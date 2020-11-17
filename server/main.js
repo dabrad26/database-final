@@ -10,13 +10,18 @@ const port = 5000;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
-// Routes
+// Primary API Routes
 app.use('/api', apiServices);
 
+/**
+ * Use shared sql class and start connection.
+ * If it fails exit with fatal exception.
+ * If success print message about listening
+ */
 sql.initConnection().then(() => {
   app.listen(port, () => console.log(`Listening on port ${port}`));
 }, error => {
   console.error('Unable to connect to MySQL', error);
-  exit(0);
+  exit(1);
 })
 

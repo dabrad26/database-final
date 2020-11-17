@@ -5,7 +5,11 @@ const router = express.Router({
   mergeParams: true,
 });
 
-// Get List of all current members
+/**
+ * API Route: `/api/members`
+ *
+ * Return list of members
+ */
 router.get('/members', (req, res) => {
   res.send({test: 'API for members'});
 });

@@ -2,6 +2,7 @@ const mysql = require('mysql');
 
 /**
  * Insercure auth is used for basic passwords with MySQL version 8.
+ * This is just for the school project demo.
  */
 class sqlClass {
   /** @type {import('mysql').Connection} */
