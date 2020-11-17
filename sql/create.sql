@@ -13,7 +13,7 @@ use db_final;
 CREATE TABLE organization (
 	organization_id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
-  discount_percent DECIMAL(3,2) NOT NULL,
+  discount_percent DECIMAL(5,2) NOT NULL,
   contact_name VARCHAR(255) NOT NULL,
   address VARCHAR(255) NOT NULL,
   address_2 VARCHAR(255),
@@ -70,13 +70,11 @@ CREATE TABLE promotion (
 CREATE TABLE membership_type (
 	membership_type_id INT PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
-  price DECIMAL(8,2) NOT NULL,
+  price DECIMAL(10,2) NOT NULL,
   number_movie_tickets INT NOT NULL,
   number_guests INT NOT NULL,
-  purchase_discount DECIMAL(3,2) NOT NULL,
   include_special_events BOOLEAN NOT NULL,
-  rental_discount DECIMAL(3,2) NOT NULL,
-  employee_incentive DECIMAL(3,2) NOT NULL
+  employee_incentive DECIMAL(5,2) NOT NULL
 );
 
 -- Create Membership Table
@@ -98,15 +96,15 @@ CREATE TABLE movie (
   start_date DATE NOT NULL,
   end_date DATE,
   type ENUM("IMAX", "3D IMAX", "35mm", "3D 35mm", "presentation") NOT NULL,
-  adult_price DECIMAL(3,2) NOT NULL,
-  child_price DECIMAL(3,2) NOT NULL
+  adult_price DECIMAL(5,2) NOT NULL,
+  child_price DECIMAL(5,2) NOT NULL
 );
 
 -- Create Benefit Table
 CREATE TABLE benefit (
 	benefit_id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
-  discount DECIMAL(3,2) NOT NULL
+  discount DECIMAL(5,2) NOT NULL
 );
 
 -- Create Special Event Table
@@ -124,7 +122,7 @@ CREATE TABLE movie_ticket_purchase (
   membership_id INT NOT NULL,
   date_time DATETIME NOT NULL,
   pass_used BOOLEAN NOT NULL,
-  ticket_price DECIMAL(3,2),
+  ticket_price DECIMAL(5,2),
   PRIMARY KEY (movie_id , membership_id),
   FOREIGN KEY (movie_id)  REFERENCES movie (movie_id) ON UPDATE CASCADE,
   FOREIGN KEY (membership_id)  REFERENCES membership (membership_id) ON UPDATE CASCADE
@@ -135,7 +133,7 @@ CREATE TABLE benefit_used (
   benefit_id INT NOT NULL,
   membership_id INT NOT NULL,
   date_time DATETIME NOT NULL,
-  price_paid DECIMAL(8,2),
+  price_paid DECIMAL(10,2),
   PRIMARY KEY (benefit_id , membership_id),
   FOREIGN KEY (benefit_id)  REFERENCES benefit (benefit_id) ON UPDATE CASCADE,
   FOREIGN KEY (membership_id)  REFERENCES membership (membership_id) ON UPDATE CASCADE
@@ -160,7 +158,7 @@ CREATE TABLE membership_purchase (
   membership_type_id INT NOT NULL,
   promotion_id INT,
   date_time DATETIME NOT NULL,
-  total_Paid DECIMAL(8,2) NOT NULL,
+  total_Paid DECIMAL(10,2) NOT NULL,
   payment_method ENUM("Cash", "Check", "Money Order", "American Express", "Discover", "Visa", "Mastercard", "Gift Card") NOT NULL,
   FOREIGN KEY (customer_id) REFERENCES customer (customer_id) ON UPDATE CASCADE,
   FOREIGN KEY (employee_id) REFERENCES employee (employee_id) ON UPDATE CASCADE,
@@ -180,3 +178,31 @@ CREATE VIEW membership_list AS
   FROM membership
   INNER JOIN movie_ticket_purchase ON movie_ticket_purchase.membership_id = membership.membership_id
   INNER JOIN membership_type ON membership_type.membership_type_id = membership.membership_type_id;
+
+-- END CREATE TABLE
+
+-- Create Current Static Entries (Movies, Benefits, Membership Types; these are admin events that change rarely)
+-- Create Movies (Only 3-5 are ever available at one time)
+INSERT INTO movie (`name`, `duration`, `start_date`, `type`, `adult_price`, `child_price`) VALUES ("Grand Canyon Adventure", 72, "2020-07-21", "3D IMAX", 6.50, 4.00);
+INSERT INTO movie (`name`, `duration`, `start_date`, `end_date`, `type`, `adult_price`, `child_price`) VALUES ("Nemo's Sea Journey", 46, "2019-01-19", "2020-02-01", "IMAX", 5.50, 3.00);
+INSERT INTO movie (`name`, `duration`, `start_date`, `type`, `adult_price`, `child_price`) VALUES ("Coral Reef", 48, "2020-09-14", "35mm", 4.50, 3.00);
+INSERT INTO movie (`name`, `duration`, `start_date`, `type`, `adult_price`, `child_price`) VALUES ("Disney's Finding Nemo", 96, "2020-07-21", "IMAX", 9.50, 6.00);
+INSERT INTO movie (`name`, `duration`, `start_date`, `type`, `adult_price`, `child_price`) VALUES ("Rocky Horror Picture Show [ADULT ONLY]", 110, "2020-10-31", "35mm", 5.00, 5.00);
+
+-- Create Benefits (roughly based on real benefits available)
+INSERT INTO benefit (`name`, `discount`) VALUES ("Gift Shop Discount", 10.00);
+INSERT INTO benefit (`name`, `discount`) VALUES ("Concessions Discount", 15.00);
+INSERT INTO benefit (`name`, `discount`) VALUES ("Facility Rental Discount", 20.00);
+INSERT INTO benefit (`name`, `discount`) VALUES ("Birthday Party Discount", 20.00);
+INSERT INTO benefit (`name`, `discount`) VALUES ("Sleep With the Fishes Discount", 30.00);
+INSERT INTO benefit (`name`, `discount`) VALUES ("Movie Theater [Full Price] Discount", 15.00);
+INSERT INTO benefit (`name`, `discount`) VALUES ("Canoe The Flint Discount", 25.00);
+INSERT INTO benefit (`name`, `discount`) VALUES ("Summer Camp Discount", 10.00);
+INSERT INTO benefit (`name`, `discount`) VALUES ("Holiday Camp Discount", 15.00);
+
+-- Create Membership Types (based on older setup prior to change at company)
+INSERT INTO membership_type VALUES (1, "Individual", 49.00, 0, 1, TRUE, 2.00);
+INSERT INTO membership_type VALUES (2, "Family", 89.00, 4, 6, TRUE, 3.00);
+INSERT INTO membership_type VALUES (5, "Friend", 199.00, 6, 6, TRUE, 5.00);
+INSERT INTO membership_type VALUES (6, "Contributor", 349.00, 10, 8, TRUE, 7.00);
+INSERT INTO membership_type VALUES (7, "Blue Hole Society", 1000.00, 10, 8, TRUE, 10.00);
