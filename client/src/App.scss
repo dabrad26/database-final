@@ -22,3 +22,43 @@ $drawer-width: 240px;
   margin-top: 64px;
   padding: 40px 20px;
 }
+
+.app-loading.MuiCircularProgress-root {
+  margin: 0 auto;
+  display: block;
+}
+
+.MuiFormControl-root {
+  width: 80% !important;
+  margin-bottom: 20px !important;
+}
+
+.floating-button.MuiFab-extended {
+  position: fixed;
+  right: 26px;
+  bottom: 45px;
+}
+
+.query-example {
+  margin: 10px;
+  padding: 6px;
+  background: #CCC;
+  overflow: auto;
+}
+
+.clickable-rows tr.MuiTableRow-root:not(.MuiTableRow-head) {
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgb(245, 245, 245);
+  }
+}
+
+.search-container {
+  .MuiFormControl-root {
+    margin-right: 10px;
+  }
+  .MuiButton-containedPrimary {
+    margin-top: 12px;
+  }
+}
