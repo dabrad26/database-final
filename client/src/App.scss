@@ -44,6 +44,7 @@ $drawer-width: 240px;
   padding: 6px;
   background: #CCC;
   overflow: auto;
+  min-height: 30px;
 }
 
 .clickable-rows tr.MuiTableRow-root:not(.MuiTableRow-head) {
@@ -60,5 +61,25 @@ $drawer-width: 240px;
   }
   .MuiButton-containedPrimary {
     margin-top: 12px;
+  }
+}
+
+.create-membership {
+  &--form-wrapper {
+    margin: 22px 0;
+    display: flex;
+
+    &-item {
+      flex: 1;
+    }
+  }
+}
+
+.MuiDrawer-modal {
+  top: 60px !important;
+  overflow-y: auto;
+
+  .MuiDrawer-paper {
+    display: block;
   }
 }

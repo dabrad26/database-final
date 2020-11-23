@@ -47,7 +47,7 @@ export default class App extends React.Component {
                 <Route path="/create">
                   <CreateCustomer />
                 </Route>
-                <Route path="/new">
+                <Route path="/new/:cust_id">
                   <CreateMember />
                 </Route>
                 <Route path="/members">

@@ -60,6 +60,50 @@ class sqlClass {
 
     return promise;
   }
+
+  /**
+   * Run a SQL command in transactions
+   *
+   * @param {string[]} queries SQL to run in order
+   * @returns {Promise} promise that resolves if success or rejects if fails
+   */
+  transaction(queries) {
+    let resolver, rejecter;
+    const promise = new Promise((resolve, reject) => {
+      resolver = resolve;
+      rejecter = reject;
+    });
+    let queryCount = 0;
+    const eachQuery = (query, priorError) => {
+      if (priorError) {
+        this.currentConnection.rollback(() => {
+          rejecter(priorError);
+        });
+      } else {
+        this.currentConnection.query(query, (error) => {
+          queryCount++;
+          if (queries[queryCount]) {
+            eachQuery(queries[queryCount], error);
+          } else {
+            this.currentConnection.commit((finalError, result) => {
+              if (finalError) {
+                rejecter(finalError);
+              } else {
+                resolver(result);
+              }
+            });
+          }
+        });
+      }
+    }
+
+    this.currentConnection.beginTransaction(error => {
+      if (error) rejecter(error);
+      eachQuery(queries[queryCount]);
+    });
+
+    return promise;
+  }
 }
 
 const sql = new sqlClass();

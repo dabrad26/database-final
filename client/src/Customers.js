@@ -28,7 +28,7 @@ export class Customers extends React.Component {
       icon: <LoyaltyIcon />,
       text: 'Sell Membership',
       onClick: row => {
-        this.props.history.push(`/new?cust_id=${row.id}`)
+        this.props.history.push(`/new/${row.id}`)
       },
     },
     {
@@ -73,7 +73,7 @@ export class Customers extends React.Component {
       this.rows = this.parseRows(response.data.data);
       window.sql_queries.set('get_customers', response.data.query);
       this.setState({loading: false});
-    }, error => {
+    }).catch(error => {
       console.error('Encountered an error getting customers', error);
       this.setState({error: true, loading: false});
     })
@@ -102,10 +102,12 @@ export class Customers extends React.Component {
   }
 
   render() {
+    const {search} = this.state;
+
     return (
       <div className="customers">
         <div className="search-container">
-          <TextField id="search" label="Search Customers" onKeyUp={this.handleError} onChange={event => {this.setState({search: event.target.value});}} value={this.currentSearch} />
+          <TextField id="search" label="Search Customers" onKeyUp={this.handleError} onChange={event => {this.setState({search: event.target.value});}} value={search} />
           <Button onClick={this.getRows} variant="contained" color="primary">Search</Button>
         </div>
         {this.mainView}

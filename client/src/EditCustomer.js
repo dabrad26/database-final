@@ -20,7 +20,7 @@ export class EditCustomer extends React.Component {
       this.model = response.data.data;
       window.sql_queries.set(`get_customer_${match.id}`, response.data.query);
       this.setState({loading: false});
-    }, error => {
+    }).catch(error => {
       console.error('Encountered an error getting specific customer', error);
       this.setState({error: true, loading: false});
     })

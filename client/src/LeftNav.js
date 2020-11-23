@@ -34,12 +34,6 @@ class LeftNav extends React.Component {
               <ListItemText primary="Create Customer" />
             </ListItem>
           </List>
-          <List>
-            <ListItem button={true} onClick={() => this.changeRoute('/new')}>
-              <ListItemIcon><AttachMoneyIcon /></ListItemIcon>
-              <ListItemText primary="Sell Membership" />
-            </ListItem>
-          </List>
           <Divider />
           <List>
             <ListItem button={true} onClick={() => this.changeRoute('/customers')}>

@@ -82,10 +82,13 @@ CREATE TABLE membership_type (
 CREATE TABLE membership (
 	membership_id INT AUTO_INCREMENT PRIMARY KEY,
 	membership_type_id INT NOT NULL,
+	customer_id INT NOT NULL,
   start_date DATE NOT NULL,
   end_date DATE NOT NULL,
   second_adult_name VARCHAR(255),
-  FOREIGN KEY (membership_type_id) REFERENCES membership_type (membership_type_id) ON UPDATE CASCADE
+  last_updated DATETIME,
+  FOREIGN KEY (membership_type_id) REFERENCES membership_type (membership_type_id) ON UPDATE CASCADE,
+  FOREIGN KEY (customer_id) REFERENCES customer (customer_id) ON UPDATE CASCADE
 );
 
 -- Create Movie Table
@@ -159,7 +162,7 @@ CREATE TABLE membership_purchase (
   membership_type_id INT NOT NULL,
   promotion_id INT,
   date_time DATETIME NOT NULL,
-  total_Paid DECIMAL(10,2) NOT NULL,
+  total_paid DECIMAL(10,2) NOT NULL,
   payment_method ENUM("Cash", "Check", "Money Order", "American Express", "Discover", "Visa", "Mastercard", "Gift Card") NOT NULL,
   FOREIGN KEY (customer_id) REFERENCES customer (customer_id) ON UPDATE CASCADE,
   FOREIGN KEY (employee_id) REFERENCES employee (employee_id) ON UPDATE CASCADE,
@@ -179,6 +182,11 @@ CREATE VIEW membership_list AS
   FROM membership
   INNER JOIN movie_ticket_purchase ON movie_ticket_purchase.membership_id = membership.membership_id
   INNER JOIN membership_type ON membership_type.membership_type_id = membership.membership_type_id;
+
+-- Create Trigger for Membership update
+CREATE TRIGGER membership_last_updated BEFORE UPDATE
+  ON membership FOR EACH ROW
+  SET NEW.last_updated = NOW();
 
 -- END: Create Tables
 

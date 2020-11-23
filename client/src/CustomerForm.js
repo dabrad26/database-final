@@ -20,6 +20,7 @@ export class CustomerForm extends React.Component {
   }
 
   save = () => {
+    this.setState({loading: true});
     const data = Object.assign({}, this.model);
     if (data.organization_id === 'NONE') delete data.organization_id;
     Axios.request({
@@ -28,8 +29,9 @@ export class CustomerForm extends React.Component {
       data
     }).then(response => {
       window.sql_queries.set(this.model.customer_id ? 'create_customer' : `update_customer_${this.model.customer_id}`, response.data.query);
-      this.props.history.push('/customers');
+      this.props.history.push(this.model.customer_id ? '/customers': `/new/${response.data.data.insertId}`);
     }).catch(error => {
+      this.setState({loading: false});
       console.error('Unable to save customer', error);
     })
   }
@@ -52,7 +54,7 @@ export class CustomerForm extends React.Component {
       this.organizations = response.data.data;
       window.sql_queries.set('get_organizations', response.data.query);
       this.setState({loading: false});
-    }, error => {
+    }).catch(error => {
       console.error('Encountered an error getting organizations', error);
       this.setState({error: true, loading: false});
     })
