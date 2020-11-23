@@ -213,8 +213,7 @@ router.get('/customers/:id/membership', (req, res) => {
     if (data.length) {
       res.send({
         query,
-        data: data[0],
-        length: data.length
+        data: data[0]
       });
     } else {
       sql.query(backupQuery).then(data => {
@@ -259,7 +258,7 @@ router.get('/memberships', (req, res) => {
   }
 
   if (activeOnly) {
-    query = query + 'AND `is_expired = 0 '
+    query = query + `${search ? 'AND' : 'WHERE'} "is_expired" = 0 `;
   }
 
   query = query + 'ORDER BY customer.last_name;';
@@ -268,6 +267,32 @@ router.get('/memberships', (req, res) => {
     res.send({
       query,
       data
+    })
+  }).catch(error => {
+    res.status(400);
+    res.send(error);
+  })
+});
+
+/**
+ * API Route: `/api/memberships/:id`
+ *
+ * Return specific membership
+ */
+router.get('/memberships/:id', (req, res) => {
+  let query = `SELECT membership.*, customer.*, membership_type.*, (membership_type.number_movie_tickets - (SELECT COUNT(*) from movie_ticket_purchase
+      INNER JOIN membership ON movie_ticket_purchase.membership_id = membership.membership_id
+      WHERE movie_ticket_purchase.pass_used = TRUE AND (movie_ticket_purchase.date_time BETWEEN membership.start_date AND membership.end_date)
+    )) AS movie_tickets_left,
+    (membership.end_date < CURDATE()) AS is_expired FROM membership
+    LEFT JOIN customer ON customer.customer_id = membership.customer_id
+    LEFT JOIN membership_type ON membership_type.membership_type_id = membership.membership_type_id
+    WHERE membership.membership_id = ${req.params.id}`;
+
+  sql.query(query).then(data => {
+    res.send({
+      query,
+      data: data[0]
     })
   }).catch(error => {
     res.status(400);
@@ -306,6 +331,226 @@ router.post('/memberships', (req, res) => {
       query,
       data
     })
+  }).catch(error => {
+    res.status(400);
+    res.send(error);
+  })
+});
+
+/**
+ * API Route: `/api/incentives`
+ *
+ * Return list of incentives by employee
+ */
+router.get('/incentives', (req, res) => {
+  const startDate = req.query.start_date;
+  const endDate = req.query.end_date;
+  let query = `SELECT employee.*, SUM(membership_type.employee_incentive) AS "total_earned", COUNT(*) AS "total_sold"
+    FROM membership_purchase
+    LEFT JOIN employee ON employee.employee_id = membership_purchase.employee_id
+    LEFT JOIN membership_type ON membership_purchase.membership_type_id = membership_type.membership_type_id
+    WHERE CAST(membership_purchase.date_time AS DATE) BETWEEN "${startDate}" AND "${endDate}"
+    GROUP BY employee.employee_id
+    ORDER BY "total_earned";`;
+
+  if (!startDate || !endDate) {
+    res.status(400);
+    res.send({message: 'Missing start or end date query'});
+  }
+
+  sql.query(query).then(data => {
+    res.send({
+      query,
+      data
+    })
+  }).catch(error => {
+    res.status(400);
+    res.send(error);
+  })
+});
+
+/**
+ * API Route: `/api/movie_tickets`
+ *
+ * Return specific list of movie tickets
+ */
+router.get('/movie_tickets', (req, res) => {
+  const query = `SELECT movie_ticket_purchase.*, movie.name FROM movie_ticket_purchase
+    LEFT JOIN movie ON movie_ticket_purchase.movie_id = movie.movie_id
+    WHERE movie_ticket_purchase.membership_id = ${req.query.membership}
+    ORDER BY movie_ticket_purchase.date_time DESC;
+  `;
+
+  sql.query(query).then(data => {
+    res.send({
+      query,
+      data
+    });
+  }).catch(error => {
+    res.status(400);
+    res.send(error);
+  })
+});
+
+/**
+ * API Route: `/api/movie_tickets`
+ *
+ * Return specific list of movie tickets
+ */
+router.post('/movie_tickets', (req, res) => {
+  const query = `INSERT INTO movie_ticket_purchase (movie_id, membership_id, date_time, pass_used, ticket_price)
+    VALUES (${req.body.movie_id}, ${req.body.membership_id}, NOW(), ${req.body.pass_used}, ${req.body.ticket_price});`;
+
+  sql.query(query).then(data => {
+    res.send({
+      query,
+      data
+    });
+  }).catch(error => {
+    res.status(400);
+    res.send(error);
+  })
+});
+
+/**
+ * API Route: `/api/movie_tickets`
+ *
+ * Return list of movie tickets
+ */
+router.get('/current_movies', (req, res) => {
+  const query = `SELECT * FROM movie WHERE end_date IS NULL OR end_date > CURDATE() ORDER BY name;`;
+
+  sql.query(query).then(data => {
+    res.send({
+      query,
+      data
+    });
+  }).catch(error => {
+    res.status(400);
+    res.send(error);
+  })
+});
+
+/**
+ * API Route: `/api/benefits`
+ *
+ * Return list of benefits
+ */
+router.get('/benefits', (req, res) => {
+  const query = `SELECT * FROM benefit ORDER BY name;`;
+
+  sql.query(query).then(data => {
+    res.send({
+      query,
+      data
+    });
+  }).catch(error => {
+    res.status(400);
+    res.send(error);
+  })
+});
+
+/**
+ * API Route: `/api/benefits_used`
+ *
+ * Return specific list of movie tickets
+ */
+router.get('/benefits_used', (req, res) => {
+  const query = `SELECT benefit_used.*, benefit.name, benefit.discount FROM benefit_used
+    LEFT JOIN benefit ON benefit_used.benefit_id = benefit.benefit_id
+    WHERE benefit_used.membership_id = ${req.query.membership}
+    ORDER BY benefit_used.date_time DESC;
+  `;
+
+  sql.query(query).then(data => {
+    res.send({
+      query,
+      data
+    });
+  }).catch(error => {
+    res.status(400);
+    res.send(error);
+  })
+});
+
+/**
+ * API Route: `/api/benefits_used`
+ *
+ * Create sold movie ticket
+ */
+router.post('/benefits_used', (req, res) => {
+  const query = `INSERT INTO benefit_used (benefit_id, membership_id, date_time, price_paid)
+    VALUES (${req.body.benefit_id}, ${req.body.membership_id}, NOW(), ${req.body.price_paid});`;
+
+  sql.query(query).then(data => {
+    res.send({
+      query,
+      data
+    });
+  }).catch(error => {
+    res.status(400);
+    res.send(error);
+  })
+});
+
+/**
+ * API Route: `/api/events`
+ *
+ * Return list of events that are happening or coming up
+ */
+router.get('/events', (req, res) => {
+  const query = `SELECT * FROM special_event
+    WHERE CAST(date_time AS DATE) >= CURDATE()
+    ORDER BY date_time ASC;`;
+
+  sql.query(query).then(data => {
+    res.send({
+      query,
+      data
+    });
+  }).catch(error => {
+    res.status(400);
+    res.send(error);
+  })
+});
+
+/**
+ * API Route: `/api/events_attended`
+ *
+ * Return specific list of special events attended
+ */
+router.get('/events_attended', (req, res) => {
+  const query = `SELECT event_attended.*, special_event.name, special_event.location FROM event_attended
+    LEFT JOIN special_event ON event_attended.special_event_id = special_event.special_event_id
+    WHERE event_attended.membership_id = ${req.query.membership}
+    ORDER BY special_event.date_time DESC;
+  `;
+
+  sql.query(query).then(data => {
+    res.send({
+      query,
+      data
+    });
+  }).catch(error => {
+    res.status(400);
+    res.send(error);
+  })
+});
+
+/**
+ * API Route: `/api/events_attended`
+ *
+ * Create special event
+ */
+router.post('/events_attended', (req, res) => {
+  const query = `INSERT INTO event_attended (special_event_id, membership_id, number_attendees)
+    VALUES (${req.body.special_event_id}, ${req.body.membership_id}, ${req.body.number_attendees});`;
+
+  sql.query(query).then(data => {
+    res.send({
+      query,
+      data
+    });
   }).catch(error => {
     res.status(400);
     res.send(error);

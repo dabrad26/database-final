@@ -3,8 +3,8 @@ import {withRouter} from 'react-router-dom';
 import { Divider, Drawer, List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import ViewListIcon from '@material-ui/icons/ViewList';
-import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import CodeIcon from '@material-ui/icons/Code';
+import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import PermContactCalendarIcon from '@material-ui/icons/PermContactCalendar';
 
 class LeftNav extends React.Component {
@@ -45,6 +45,13 @@ class LeftNav extends React.Component {
             <ListItem button={true} onClick={() => this.changeRoute('/members')}>
               <ListItemIcon><ViewListIcon /></ListItemIcon>
               <ListItemText primary="View Memberships" />
+            </ListItem>
+          </List>
+          <Divider />
+          <List>
+            <ListItem button={true} onClick={() => this.changeRoute('/incentives')}>
+              <ListItemIcon><AttachMoneyIcon /></ListItemIcon>
+              <ListItemText primary="Incentive Earned" />
             </ListItem>
           </List>
           <Divider />

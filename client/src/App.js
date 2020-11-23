@@ -10,6 +10,10 @@ import Axios from 'axios';
 import { CircularProgress } from '@material-ui/core';
 import Customers from './Customers';
 import EditCustomer from './EditCustomer';
+import IncentiveList from './IncentiveList';
+import MovieTickets from './MovieTickets';
+import BenefitsUsed from './BenefitsUsed';
+import EventAttended from './EventAttended';
 
 export default class App extends React.Component {
   state = {
@@ -50,14 +54,26 @@ export default class App extends React.Component {
                 <Route path="/new/:cust_id">
                   <CreateMember />
                 </Route>
-                <Route path="/members">
+                <Route path="/members" exact={true}>
                   <Members />
+                </Route>
+                <Route path="/members/:id/movies">
+                  <MovieTickets />
+                </Route>
+                <Route path="/members/:id/benefits">
+                  <BenefitsUsed />
+                </Route>
+                <Route path="/members/:id/events">
+                  <EventAttended />
                 </Route>
                 <Route path="/customers" exact={true}>
                   <Customers />
                 </Route>
                 <Route path="/customers/:id">
                   <EditCustomer />
+                </Route>
+                <Route path="/incentives">
+                  <IncentiveList />
                 </Route>
                 <Route path="*">
                   <h2>Page Not Found (404)</h2>

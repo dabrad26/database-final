@@ -5,8 +5,11 @@ import { withRouter } from 'react-router-dom';
 import Error from './Error';
 import TableList from './TableList';
 import LoyaltyIcon from '@material-ui/icons/Loyalty';
+import TheatersIcon from '@material-ui/icons/Theaters';
+import ShoppingBasketIcon from '@material-ui/icons/ShoppingBasket';
+import EventAvailableIcon from '@material-ui/icons/EventAvailable';
 
-export class Customers extends React.Component {
+export class Members extends React.Component {
   state = {
     loading: true,
     error: false,
@@ -20,6 +23,7 @@ export class Customers extends React.Component {
     'Phone',
     'Membership',
     'Expires on',
+    'Guests',
     'Movie Tickets'
   ];
 
@@ -29,6 +33,27 @@ export class Customers extends React.Component {
       text: 'Sell Membership',
       onClick: row => {
         this.props.history.push(`/new/${row.id}`)
+      },
+    },
+    {
+      icon: <TheatersIcon />,
+      text: 'Movie tickets',
+      onClick: row => {
+        this.props.history.push(`/members/${row.id}/movies`)
+      },
+    },
+    {
+      icon: <ShoppingBasketIcon />,
+      text: 'Benefits',
+      onClick: row => {
+        this.props.history.push(`/members/${row.id}/benefits`)
+      },
+    },
+    {
+      icon: <EventAvailableIcon />,
+      text: 'Attend Event',
+      onClick: row => {
+        this.props.history.push(`/members/${row.id}/events`)
       },
     },
   ]
@@ -42,15 +67,16 @@ export class Customers extends React.Component {
         row.phone,
         row.name,
         new Date(row.end_date).toLocaleDateString(),
+        row.number_guests,
         row.movie_tickets_left
       ]};
     });
   }
 
-  getRows = () => {
+  getRows = (active = false) => {
     const {search} = this.state;
-    this.setState({loading: true});
-    Axios.get(`/memberships?q=${search}`).then(response => {
+    this.setState({loading: true, activeOnly: active});
+    Axios.get(`/memberships?q=${search}${active ? '&active=true' : ''}`).then(response => {
       this.rows = this.parseRows(response.data.data);
       window.sql_queries.set('get_members', response.data.query);
       this.setState({loading: false});
@@ -60,7 +86,7 @@ export class Customers extends React.Component {
     })
   }
 
-  handleError = event => {
+  handleEnter = event => {
     if (event.key === 'Enter') {
       this.getRows()
     }
@@ -88,13 +114,13 @@ export class Customers extends React.Component {
     return (
       <div className="members">
         <div className="search-container">
-          <TextField id="search" label="Search Members" onKeyUp={this.handleError} onChange={event => {this.setState({search: event.target.value});}} value={search} />
+          <TextField id="search" label="Search Members" onKeyUp={this.handleEnter} onChange={event => {this.setState({search: event.target.value});}} value={search} />
           <Button onClick={this.getRows} variant="contained" color="primary">Search</Button>
         </div>
         <div className="filter-container">
           <FormControlLabel
             label="Show active memberships only"
-            control={<Checkbox checked={activeOnly} onChange={event => {this.setState({activeOnly: event.target.checked});}} name="active" color="primary" />}
+            control={<Checkbox checked={activeOnly} onChange={event => {this.getRows(event.target.checked)}} name="active" color="primary" />}
           />
         </div>
         {this.mainView}
@@ -103,4 +129,4 @@ export class Customers extends React.Component {
   }
 }
 
-export default withRouter(Customers);
+export default withRouter(Members);

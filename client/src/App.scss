@@ -83,3 +83,27 @@ $drawer-width: 240px;
     display: block;
   }
 }
+
+
+.date-container {
+  display: flex;
+
+  .MuiFormControl-root {
+    max-width: 250px;
+    margin-right: 10px;
+  }
+  .MuiButton-containedPrimary {
+    margin-top: 12px;
+    height: 36px;
+  }
+}
+
+.movie-tickets, .benefit-used, .attend-event-used {
+  .MuiCard-root {
+    margin-bottom: 22px;
+  }
+
+  .MuiButton-containedPrimary {
+    max-width: 160px;
+  }
+}

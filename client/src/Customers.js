@@ -79,7 +79,7 @@ export class Customers extends React.Component {
     })
   }
 
-  handleError = event => {
+  handleEnter = event => {
     if (event.key === 'Enter') {
       this.getRows()
     }
@@ -107,7 +107,7 @@ export class Customers extends React.Component {
     return (
       <div className="customers">
         <div className="search-container">
-          <TextField id="search" label="Search Customers" onKeyUp={this.handleError} onChange={event => {this.setState({search: event.target.value});}} value={search} />
+          <TextField id="search" label="Search Customers" onKeyUp={this.handleEnter} onChange={event => {this.setState({search: event.target.value});}} value={search} />
           <Button onClick={this.getRows} variant="contained" color="primary">Search</Button>
         </div>
         {this.mainView}

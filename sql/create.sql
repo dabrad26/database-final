@@ -122,33 +122,33 @@ CREATE TABLE special_event (
 
 -- Create Movie Ticket Table (this is using a movie ticket; a purchased ticket)
 CREATE TABLE movie_ticket_purchase (
+  movie_ticket_purchase_id INT AUTO_INCREMENT PRIMARY KEY,
   movie_id INT NOT NULL,
   membership_id INT NOT NULL,
   date_time DATETIME NOT NULL,
   pass_used BOOLEAN NOT NULL,
   ticket_price DECIMAL(5,2),
-  PRIMARY KEY (movie_id , membership_id),
   FOREIGN KEY (movie_id)  REFERENCES movie (movie_id) ON UPDATE CASCADE,
   FOREIGN KEY (membership_id)  REFERENCES membership (membership_id) ON UPDATE CASCADE
 );
 
 -- Create Benefit Used Table (this is using a benefit; more details tracked in POS)
 CREATE TABLE benefit_used (
+  benefit_used_id INT AUTO_INCREMENT PRIMARY KEY,
   benefit_id INT NOT NULL,
   membership_id INT NOT NULL,
   date_time DATETIME NOT NULL,
   price_paid DECIMAL(10,2),
-  PRIMARY KEY (benefit_id , membership_id),
   FOREIGN KEY (benefit_id)  REFERENCES benefit (benefit_id) ON UPDATE CASCADE,
   FOREIGN KEY (membership_id)  REFERENCES membership (membership_id) ON UPDATE CASCADE
 );
 
 -- Create Event Attended Table (this is showing up to an event. `number_attendees` includes primary member)
 CREATE TABLE event_attended (
+  events_attended_id INT AUTO_INCREMENT PRIMARY KEY,
   special_event_id INT NOT NULL,
   membership_id INT NOT NULL,
   number_attendees INT,
-  PRIMARY KEY (special_event_id , membership_id),
   FOREIGN KEY (special_event_id)  REFERENCES special_event (special_event_id) ON UPDATE CASCADE,
   FOREIGN KEY (membership_id)  REFERENCES membership (membership_id) ON UPDATE CASCADE
 );
