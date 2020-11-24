@@ -54,7 +54,9 @@ All SQL happens via the sql Class in the server.  By default expects to use scho
 - Query customers who signed up with a corporate discount for reports to corporate sponsors on use by their employees
 - Query active promotions
 
+## Example of UI
 
+[Example UI Video](./assets/example.mov)
 
 ## Logical Design
 
