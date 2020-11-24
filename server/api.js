@@ -245,23 +245,17 @@ router.get('/customers/:id/membership', (req, res) => {
 router.get('/memberships', (req, res) => {
   const search = req.query.q;
   const activeOnly = req.query.active;
-  let query = `SELECT membership.*, customer.*, membership_type.*, (membership_type.number_movie_tickets - (SELECT COUNT(*) from movie_ticket_purchase
-      INNER JOIN membership ON movie_ticket_purchase.membership_id = membership.membership_id
-      WHERE movie_ticket_purchase.pass_used = TRUE AND (movie_ticket_purchase.date_time BETWEEN membership.start_date AND membership.end_date)
-    )) AS movie_tickets_left,
-    (membership.end_date < CURDATE()) AS is_expired FROM membership
-    LEFT JOIN customer ON customer.customer_id = membership.customer_id
-    LEFT JOIN membership_type ON membership_type.membership_type_id = membership.membership_type_id `;
+  let query = `SELECT * from membership_list `;
 
   if (search) {
-    query = query + `WHERE (LOWER(customer.last_name) LIKE LOWER('%${search}%')) OR (LOWER(customer.first_name) LIKE LOWER('%${search}%')) OR (LOWER(customer.email) LIKE LOWER('%${search}%')) OR (LOWER(customer.phone) LIKE LOWER('%${search}%')) OR (LOWER(customer.address) LIKE LOWER('%${search}%')) `;
+    query = query + `WHERE (LOWER(last_name) LIKE LOWER('%${search}%')) OR (LOWER(first_name) LIKE LOWER('%${search}%')) OR (LOWER(email) LIKE LOWER('%${search}%')) OR (LOWER(phone) LIKE LOWER('%${search}%')) OR (LOWER(address) LIKE LOWER('%${search}%')) `;
   }
 
   if (activeOnly) {
-    query = query + `${search ? 'AND' : 'WHERE'} "is_expired" = 0 `;
+    query = query + `HAVING \`is_expired\` = 0 `;
   }
 
-  query = query + 'ORDER BY customer.last_name;';
+  query = query + 'ORDER BY last_name;';
 
   sql.query(query).then(data => {
     res.send({
@@ -280,14 +274,7 @@ router.get('/memberships', (req, res) => {
  * Return specific membership
  */
 router.get('/memberships/:id', (req, res) => {
-  let query = `SELECT membership.*, customer.*, membership_type.*, (membership_type.number_movie_tickets - (SELECT COUNT(*) from movie_ticket_purchase
-      INNER JOIN membership ON movie_ticket_purchase.membership_id = membership.membership_id
-      WHERE movie_ticket_purchase.pass_used = TRUE AND (movie_ticket_purchase.date_time BETWEEN membership.start_date AND membership.end_date)
-    )) AS movie_tickets_left,
-    (membership.end_date < CURDATE()) AS is_expired FROM membership
-    LEFT JOIN customer ON customer.customer_id = membership.customer_id
-    LEFT JOIN membership_type ON membership_type.membership_type_id = membership.membership_type_id
-    WHERE membership.membership_id = ${req.params.id}`;
+  let query = `SELECT * FROM membership_list WHERE membership_id = ${req.params.id};`;
 
   sql.query(query).then(data => {
     res.send({
@@ -308,22 +295,22 @@ router.get('/memberships/:id', (req, res) => {
 router.post('/memberships', (req, res) => {
   let queries = [
     `INSERT INTO membership (membership_type_id, customer_id, start_date, end_date, second_adult_name)
-        VALUES (${req.body.membership_type_id}, ${req.body.customer_id} , "${req.body.start_date}", "${req.body.end_date}", ${req.body.second_adult_name ? `"${req.body.second_adult_name}"` : "NULL"});`,
+      VALUES (${req.body.membership_type_id}, ${req.body.customer_id} , "${req.body.start_date}", "${req.body.end_date}", ${req.body.second_adult_name ? `"${req.body.second_adult_name}"` : "NULL"});`,
     `INSERT INTO membership_purchase (customer_id, employee_id, membership_id, membership_type_id, promotion_id, date_time, total_paid, payment_method)
       VALUES (${req.body.customer_id}, ${req.body.employee_id}, LAST_INSERT_ID(), ${req.body.membership_type_id}, ${req.body.promotion_id ? `${req.body.promotion_id}` : "NULL"}, NOW(), "${req.body.total_paid}", "${req.body.payment_method}");`,
   ];
 
   if (req.body.membership_id) {
     queries = [
-      `UPDATE membership SET membership_type_id = ${req.body.membership_type_id}, customer_id = ${req.body.customer_id}, start_date = "${req.body.start_date}", end_date = "${req.body.end_date}", second_adult_name = ${req.body.second_adult_name ? `"${req.body.second_adult_name}"` : "NULL"}
-          WHERE membership_id = ${req.body.membership_id};`,
+      `UPDATE membership SET membership_type_id = ${req.body.membership_type_id}, customer_id = ${req.body.customer_id}, start_date = CURDATE(), end_date = "${req.body.end_date}", second_adult_name = ${req.body.second_adult_name ? `"${req.body.second_adult_name}"` : "NULL"}
+        WHERE membership_id = ${req.body.membership_id};`,
       `INSERT INTO membership_purchase (customer_id, employee_id, membership_id, membership_type_id, promotion_id, date_time, total_paid, payment_method)
-        VALUES (${req.body.customer_id}, ${req.body.employee_id}, LAST_INSERT_ID(), ${req.body.membership_type_id}, ${req.body.promotion_id ? `${req.body.promotion_id}` : "NULL"}, NOW(), "${req.body.total_paid}", "${req.body.payment_method}");`,
+        VALUES (${req.body.customer_id}, ${req.body.employee_id}, ${req.body.membership_id}, ${req.body.membership_type_id}, ${req.body.promotion_id ? `${req.body.promotion_id}` : "NULL"}, NOW(), "${req.body.total_paid}", "${req.body.payment_method}");`,
     ];
   }
 
   const query = `START TRANSACTION;
-    ${queries.filter(data => data)}
+    ${queries.filter(data => data).join('\n')}
   COMMIT;`;
 
   sql.transaction(queries).then(data => {

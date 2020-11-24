@@ -39,21 +39,21 @@ export class Members extends React.Component {
       icon: <TheatersIcon />,
       text: 'Movie tickets',
       onClick: row => {
-        this.props.history.push(`/members/${row.id}/movies`)
+        this.props.history.push(`/members/${row.member_id}/movies`)
       },
     },
     {
       icon: <ShoppingBasketIcon />,
       text: 'Benefits',
       onClick: row => {
-        this.props.history.push(`/members/${row.id}/benefits`)
+        this.props.history.push(`/members/${row.member_id}/benefits`)
       },
     },
     {
       icon: <EventAvailableIcon />,
       text: 'Attend Event',
       onClick: row => {
-        this.props.history.push(`/members/${row.id}/events`)
+        this.props.history.push(`/members/${row.member_id}/events`)
       },
     },
   ]
@@ -62,6 +62,7 @@ export class Members extends React.Component {
     return data.map(row => {
       return {
         id: row.customer_id,
+        member_id: row.membership_id,
         columns: [
         `${row.first_name} ${row.last_name} (${row.email})`,
         row.phone,
@@ -73,10 +74,11 @@ export class Members extends React.Component {
     });
   }
 
-  getRows = (active = false) => {
+  getRows = (active) => {
     const {search} = this.state;
-    this.setState({loading: true, activeOnly: active});
-    Axios.get(`/memberships?q=${search}${active ? '&active=true' : ''}`).then(response => {
+    this.setState({loading: true});
+    if (typeof active === 'boolean') this.setState({activeOnly: active});
+    Axios.get(`/memberships?q=${search}${active === true ? '&active=true' : ''}`).then(response => {
       this.rows = this.parseRows(response.data.data);
       window.sql_queries.set('get_members', response.data.query);
       this.setState({loading: false});

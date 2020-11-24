@@ -43,14 +43,14 @@ export class MovieTickets extends React.Component {
       window.sql_queries.set(`get_movies_${match.params.id}`, response.data.query);
       Axios.get(`/memberships/${match.params.id}`).then(membership => {
         this.membershipData = membership.data.data;
-        window.sql_queries.set(`get_membership_${match.params.id}`, response.data.query);
+        window.sql_queries.set(`get_membership_${match.params.id}`, membership.data.query);
         Axios.get(`/current_movies`).then(movies => {
           this.movies = movies.data.data;
           this.model.movie_id = this.model.movie_id || this.movies[0].movie_id;
           this.model.type = 'ADULT';
           this.model.pass_used = this.membershipData.movie_tickets_left >= 1;
           this.model.membership_id = this.membershipData.membership_id;
-          window.sql_queries.set('get_movies', response.data.query);
+          window.sql_queries.set('get_movies', movies.data.query);
           this.setState({loading: false});
         }).catch(error => {
           console.error('Encountered an error getting movie tickets', error);

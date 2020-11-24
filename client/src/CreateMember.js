@@ -35,7 +35,7 @@ export class CreateMember extends React.Component {
             </>
           }
           <h3>Current Membership</h3>
-          <p>{membershipType.name}, Expires on {new Date(this.customerData.end_date).toString()}</p>
+          <p>{membershipType.name}, Expires on {new Date(this.customerData.end_date).toLocaleDateString()}</p>
         </div>
       );
     } else {

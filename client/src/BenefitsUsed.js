@@ -41,12 +41,12 @@ export class BenefitsUsed extends React.Component {
       window.sql_queries.set(`get_benefits_${match.params.id}`, response.data.query);
       Axios.get(`/memberships/${match.params.id}`).then(membership => {
         this.membershipData = membership.data.data;
-        window.sql_queries.set(`get_membership_${match.params.id}`, response.data.query);
+        window.sql_queries.set(`get_membership_${match.params.id}`, membership.data.query);
         Axios.get(`/benefits`).then(benefits => {
           this.benefits = benefits.data.data;
           this.model.benefit_id = this.model.benefit_id || this.benefits[0].benefit_id;
           this.model.membership_id = this.membershipData.membership_id;
-          window.sql_queries.set('get_benefits', response.data.query);
+          window.sql_queries.set('get_benefits', benefits.data.query);
           this.setState({loading: false});
         }).catch(error => {
           console.error('Encountered an error getting benefits', error);

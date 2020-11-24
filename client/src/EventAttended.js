@@ -43,12 +43,12 @@ export class EventAttended extends React.Component {
       window.sql_queries.set(`get_events_attended_${match.params.id}`, response.data.query);
       Axios.get(`/memberships/${match.params.id}`).then(membership => {
         this.membershipData = membership.data.data;
-        window.sql_queries.set(`get_membership_${match.params.id}`, response.data.query);
+        window.sql_queries.set(`get_membership_${match.params.id}`, membership.data.query);
         Axios.get(`/events`).then(events => {
           this.events = events.data.data;
           this.model.special_event_id = this.model.special_event_id || this.events[0].special_event_id;
           this.model.membership_id = this.membershipData.membership_id;
-          window.sql_queries.set('get_events', response.data.query);
+          window.sql_queries.set('get_events', events.data.query);
           this.setState({loading: false});
         }).catch(error => {
           console.error('Encountered an error getting events', error);
